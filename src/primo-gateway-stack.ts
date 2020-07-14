@@ -1,4 +1,5 @@
 import * as cdk from '@aws-cdk/core'
+import { Fn } from '@aws-cdk/core'
 import apigateway = require('@aws-cdk/aws-apigateway')
 import lambda = require('@aws-cdk/aws-lambda')
 import { RetentionDays } from '@aws-cdk/aws-logs'
@@ -11,6 +12,7 @@ export interface IPrimoGatewayStackProps extends cdk.StackProps {
   readonly lambdaCodePath: string
   readonly sentryProject: string
   readonly sentryVersion: string
+  readonly networkStackName: string
 }
 
 export default class PrimoGatewayStack extends cdk.Stack {
@@ -26,12 +28,20 @@ export default class PrimoGatewayStack extends cdk.Stack {
       PRIMO_URL: StringParameter.valueForStringParameter(this, `${paramStorePath}/primo_url`),
     }
     // VPC needed to access certain APIs.
-    const lambdaVpc = Vpc.fromLookup(this, 'LambdaVpc', {
-      vpcId: StringParameter.valueFromLookup(this, `${paramStorePath}/vpcid`),
+    const vpcId = Fn.importValue(`${props.networkStackName}:VPCID`)
+    const lambdaVpc = Vpc.fromVpcAttributes(this, 'LambdaVpc', {
+      vpcId,
+      availabilityZones: [Fn.select(0, Fn.getAzs()), Fn.select(1, Fn.getAzs())],
+      publicSubnetIds: [
+        Fn.importValue(`${props.networkStackName}:PublicSubnet1ID`),
+        Fn.importValue(`${props.networkStackName}:PublicSubnet2ID`),
+      ],
+      privateSubnetIds: [
+        Fn.importValue(`${props.networkStackName}:PrivateSubnet1ID`),
+        Fn.importValue(`${props.networkStackName}:PrivateSubnet2ID`),
+      ],
     })
-    const subnetId = StringParameter.valueFromLookup(this, `${paramStorePath}/subnetid`)
-    const subnet = lambdaVpc.privateSubnets.filter(subnet => subnet.subnetId === subnetId)
-    const securityGroupId = StringParameter.valueFromLookup(this, `${paramStorePath}/securitygroupid`)
+    const securityGroupId = StringParameter.valueForStringParameter(this, `${paramStorePath}/securitygroupid`)
     const securityGroup = SecurityGroup.fromSecurityGroupId(this, 'LambdaSecurityGroup', securityGroupId)
 
     const queryLambda = new lambda.Function(this, 'QueryFunction', {
@@ -46,7 +56,7 @@ export default class PrimoGatewayStack extends cdk.Stack {
       environment: env,
       vpc: lambdaVpc,
       vpcSubnets: {
-        subnets: subnet,
+        subnets: lambdaVpc.privateSubnets,
       },
       securityGroups: [securityGroup],
     })
@@ -63,7 +73,7 @@ export default class PrimoGatewayStack extends cdk.Stack {
       environment: env,
       vpc: lambdaVpc,
       vpcSubnets: {
-        subnets: subnet,
+        subnets: lambdaVpc.privateSubnets,
       },
       securityGroups: [securityGroup],
     })

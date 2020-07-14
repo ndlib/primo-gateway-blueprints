@@ -19,6 +19,7 @@ app.node.applyAspect(new StackTags())
 
 const stage = app.node.tryGetContext('stage') || 'dev'
 const sentryProject = app.node.tryGetContext('sentryProject')
+const networkStackName = app.node.tryGetContext('networkStack')
 
 let lambdaCodePath = app.node.tryGetContext('lambdaCodePath')
 let sentryVersion = app.node.tryGetContext('sentryVersion')
@@ -36,10 +37,7 @@ if (lambdaCodePath) {
     lambdaCodePath,
     sentryProject,
     sentryVersion,
-    env: {
-      account: process.env.CDK_DEFAULT_ACCOUNT,
-      region: process.env.CDK_DEFAULT_REGION,
-    },
+    networkStackName,
   })
 }
 
@@ -58,4 +56,5 @@ new PrimoGatewayPipelineStack(app, pipelineName, {
   sentryOrg: app.node.tryGetContext('sentryOrg'),
   sentryProject,
   emailReceivers: app.node.tryGetContext('emailReceivers'),
+  networkStackName,
 })

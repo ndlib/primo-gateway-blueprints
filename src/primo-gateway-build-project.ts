@@ -12,6 +12,7 @@ export interface IPrimoGatewayBuildProjectProps extends codebuild.PipelineProjec
   readonly sentryProject: string
   readonly gitOwner: string
   readonly serviceRepository: string
+  readonly networkStackName: string
 }
 
 export default class PrimoGatewayBuildProject extends codebuild.PipelineProject {
@@ -55,6 +56,10 @@ export default class PrimoGatewayBuildProject extends codebuild.PipelineProject 
           },
           GITHUB_REPO: {
             value: `${props.gitOwner}/${props.serviceRepository}`,
+            type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
+          },
+          NETWORK_STACK: {
+            value: props.networkStackName,
             type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
           },
         },

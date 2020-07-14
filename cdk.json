@@ -14,6 +14,7 @@
     "sentryTokenPath": "/all/sentry/ci-token",
     "sentryOrg": "university-of-notre-dame-ts",
     "sentryProject": "primo-gateway",
-    "emailReceivers": "wse-notifications-group@nd.edu"
+    "emailReceivers": "wse-notifications-group@nd.edu",
+    "networkStack": "peered-network"
   }
 }

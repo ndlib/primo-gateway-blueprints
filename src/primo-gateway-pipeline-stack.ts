@@ -30,6 +30,7 @@ export interface IPrimoGatewayPipelineStackProps extends cdk.StackProps {
   readonly sentryTokenPath: string
   readonly sentryOrg: string
   readonly sentryProject: string
+  readonly networkStackName: string
 }
 
 export default class PrimoGatewayPipelineStack extends cdk.Stack {
