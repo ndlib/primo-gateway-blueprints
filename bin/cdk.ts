@@ -56,5 +56,6 @@ new PrimoGatewayPipelineStack(app, pipelineName, {
   sentryOrg: app.node.tryGetContext('sentryOrg'),
   sentryProject,
   emailReceivers: app.node.tryGetContext('emailReceivers'),
+  slackNotifyStackName: app.node.tryGetContext('slackNotifyStackName'),
   networkStackName,
 })
