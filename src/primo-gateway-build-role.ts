@@ -175,6 +175,16 @@ export class PrimoGatewayBuildRole extends Role {
         actions: ['ssm:GetParametersByPath', 'ssm:GetParameter', 'ssm:GetParameters'],
       }),
     )
+
+    // Allow creating parameters (and delete in case of stack rollback)
+    this.addToPolicy(
+      new PolicyStatement({
+        resources: [
+          Fn.sub('arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/all/primo-gateway/*'),
+        ],
+        actions: ['ssm:PutParameter', 'ssm:DeleteParameter', 'ssm:AddTagsToResource', 'ssm:RemoveTagsFromResource'],
+      }),
+    )
   }
 }
 

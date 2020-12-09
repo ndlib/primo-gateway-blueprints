@@ -98,7 +98,7 @@ export default class PrimoGatewayStack extends cdk.Stack {
       validateRequestParameters: true,
     })
 
-    const defaultMethodOptions = {
+    const authorizationMethodOptions = {
       authorizationType: apigateway.AuthorizationType.CUSTOM,
       authorizer: new apigateway.TokenAuthorizer(this, 'JwtAuthorizer', {
         handler: lambda.Function.fromFunctionArn(
@@ -120,9 +120,6 @@ export default class PrimoGatewayStack extends cdk.Stack {
       resources: [
         {
           pathPart: 'query',
-          options: {
-            defaultMethodOptions: defaultMethodOptions,
-          },
           methods: [
             {
               httpMethod: 'GET',
@@ -133,7 +130,7 @@ export default class PrimoGatewayStack extends cdk.Stack {
         {
           pathPart: 'favorites',
           options: {
-            defaultMethodOptions: defaultMethodOptions,
+            defaultMethodOptions: authorizationMethodOptions,
           },
           methods: [
             {
@@ -143,6 +140,13 @@ export default class PrimoGatewayStack extends cdk.Stack {
           ],
         },
       ],
+    })
+
+    // Output API url to ssm so we can import it in the QA project
+    new StringParameter(this, 'ApiUrlParameter', {
+      parameterName: `${paramStorePath}/api-url`,
+      description: 'Path to root of the API gateway.',
+      stringValue: api.url,
     })
   }
 }
