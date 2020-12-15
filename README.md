@@ -11,5 +11,5 @@ Infrastructure-as-code for the Hesburgh Libraries [primo-gateway service](https:
 
 ## Deployment
 ```
-cdk deploy primo-gateway-pipeline
+cdk deploy primo-gateway-pipeline -c slackNotifyStackName=slack-approval-bot-wse-notifier
 ```
