@@ -129,13 +129,11 @@ export default class PrimoGatewayStack extends cdk.Stack {
         },
         {
           pathPart: 'favorites',
-          options: {
-            defaultMethodOptions: authorizationMethodOptions,
-          },
           methods: [
             {
               httpMethod: 'GET',
               integration: new apigateway.LambdaIntegration(favoritesLambda),
+              options: authorizationMethodOptions,
             },
           ],
         },
