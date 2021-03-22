@@ -51,7 +51,7 @@ export default class PrimoGatewayStack extends cdk.Stack {
       handler: 'query.handler',
       runtime: lambda.Runtime.NODEJS_12_X,
       logRetention: RetentionDays.ONE_WEEK,
-      memorySize: 512,
+      memorySize: 1024,
       timeout: cdk.Duration.seconds(30),
       environment: env,
       vpc: lambdaVpc,
@@ -59,6 +59,7 @@ export default class PrimoGatewayStack extends cdk.Stack {
         subnets: lambdaVpc.privateSubnets,
       },
       securityGroups: [securityGroup],
+      tracing: lambda.Tracing.ACTIVE,
     })
 
     const favoritesLambda = new lambda.Function(this, 'FavoritesFunction', {
@@ -68,7 +69,7 @@ export default class PrimoGatewayStack extends cdk.Stack {
       handler: 'favorites.handler',
       runtime: lambda.Runtime.NODEJS_12_X,
       logRetention: RetentionDays.ONE_WEEK,
-      memorySize: 512,
+      memorySize: 1024,
       timeout: cdk.Duration.seconds(30),
       environment: env,
       vpc: lambdaVpc,
@@ -76,6 +77,7 @@ export default class PrimoGatewayStack extends cdk.Stack {
         subnets: lambdaVpc.privateSubnets,
       },
       securityGroups: [securityGroup],
+      tracing: lambda.Tracing.ACTIVE,
     })
 
     // API GATEWAY
@@ -87,6 +89,7 @@ export default class PrimoGatewayStack extends cdk.Stack {
         stageName: props.stage,
         metricsEnabled: true,
         loggingLevel: apigateway.MethodLoggingLevel.ERROR,
+        tracingEnabled: true,
       },
       defaultCorsPreflightOptions: {
         allowOrigins: ['*'],
