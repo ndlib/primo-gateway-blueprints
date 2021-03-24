@@ -1,0 +1,6 @@
+{
+  "ssm:account=333680067100:parameterName=/all/primo-gateway/dev/cache_enabled:region=us-east-1": "false",
+  "ssm:account=333680067100:parameterName=/all/primo-gateway/dev/cache_ttl:region=us-east-1": "900",
+  "ssm:account=333680067100:parameterName=/all/primo-gateway/prep/cache_enabled:region=us-east-1": "true",
+  "ssm:account=333680067100:parameterName=/all/primo-gateway/prep/cache_ttl:region=us-east-1": "900"
+}
