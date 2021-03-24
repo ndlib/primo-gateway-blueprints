@@ -90,6 +90,8 @@ export default class PrimoGatewayStack extends cdk.Stack {
         metricsEnabled: true,
         loggingLevel: apigateway.MethodLoggingLevel.ERROR,
         tracingEnabled: true,
+        cachingEnabled: StringParameter.valueFromLookup(this, `${paramStorePath}/cache_enabled`).trim().toLowerCase() === 'true',
+        cacheTtl: cdk.Duration.seconds(parseInt(StringParameter.valueFromLookup(this, `${paramStorePath}/cache_ttl`))),
       },
       defaultCorsPreflightOptions: {
         allowOrigins: ['*'],
