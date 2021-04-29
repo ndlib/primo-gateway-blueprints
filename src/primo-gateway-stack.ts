@@ -128,7 +128,16 @@ export default class PrimoGatewayStack extends cdk.Stack {
           methods: [
             {
               httpMethod: 'GET',
-              integration: new apigateway.LambdaIntegration(queryLambda),
+              integration: new apigateway.LambdaIntegration(queryLambda, {
+                cacheKeyParameters: [
+                  'method.request.querystring.docids',
+                ],
+              }),
+              options: {
+                requestParameters: {
+                  'method.request.querystring.docids': true,
+                },
+              },
             },
           ],
         },
@@ -137,8 +146,21 @@ export default class PrimoGatewayStack extends cdk.Stack {
           methods: [
             {
               httpMethod: 'GET',
-              integration: new apigateway.LambdaIntegration(favoritesLambda),
-              options: authorizationMethodOptions,
+              integration: new apigateway.LambdaIntegration(favoritesLambda, {
+                cacheKeyParameters: [
+                  ...Object.keys(authorizationMethodOptions.requestParameters),
+                  'method.request.querystring.alephId',
+                  'method.request.querystring.institution',
+                ],
+              }),
+              options: {
+                ...authorizationMethodOptions,
+                requestParameters: {
+                  ...authorizationMethodOptions.requestParameters,
+                  'method.request.querystring.alephId': true,
+                  'method.request.querystring.institution': true,
+                },
+              },
             },
           ],
         },
